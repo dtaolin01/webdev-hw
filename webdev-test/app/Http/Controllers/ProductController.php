@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Models\Product;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -18,9 +18,9 @@ class ProductController extends Controller
         return view('products.create');
     }
 
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        Product::create($this->validated($request));
+        Product::create($request->validated());
         return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
@@ -29,9 +29,9 @@ class ProductController extends Controller
         return view('products.edit', compact('product'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        $product->update($this->validated($request));
+        $product->update($request->validated());
         return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
@@ -39,14 +39,5 @@ class ProductController extends Controller
     {
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
-    }
-
-    private function validated(Request $request): array
-    {
-        return $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-        ]);
     }
 }
